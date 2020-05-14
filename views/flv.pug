@@ -1,0 +1,105 @@
+doctype html
+html(lang="es")
+	head
+		meta(charset="utf-8")
+		meta(http-equiv="X-UA-Compatible" content="IE=edge")
+		meta(name="viewport" content="width=device-width, initial-scale=1")
+		meta(name="description" content="streaming-test")
+		meta(name="author" content="@jegerima")
+
+		title Streaming
+
+		link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous")
+		script(src="https://cdn.bootcss.com/flv.js/1.5.0/flv.min.js")
+
+		style.
+			#play, #pause{
+				margin-right: 1rem;
+			}
+
+			video{
+				max-width: 100%;
+			}
+
+			audio::-webkit-media-controls-timeline,
+			video::-webkit-media-controls-timeline {
+				display: none;
+			}
+
+			.hide{
+				display: none !important;
+			}
+	body
+		.container
+			br
+			.row
+				.col.text-center
+					button(id="play" class="btn btn-primary") PLAY
+					button(id="pause" class="btn btn-secondary") PAUSE
+					button(id="destroy" class="btn btn-danger") DESTROY
+			br
+			.row
+				.col.text-center
+					button(id="rebuild" class="btn btn-success hide") REBUILD
+			br
+			.row
+				.col-12.text-center
+					video(id="videoElement" controls="controls")
+			br
+	script.
+		var flvPlayer;
+		if (flvjs.isSupported()) {
+			var videoElement = document.getElementById('videoElement');
+			var flvPlayer = flvjs.createPlayer({
+				type: 'flv',
+				url: 'http://54.161.207.244:8050/live/SSBU.flv'
+			});
+			flvPlayer.attachMediaElement(videoElement);
+			flvPlayer.load();
+		}
+
+		document.getElementById('play').addEventListener('click', function(){
+			console.log('NOW PLAYING');
+			if(flvPlayer) flvPlayer.play();
+		});
+
+		document.getElementById('pause').addEventListener('click', function(){
+			console.log('NOW PAUSE');
+			if(flvPlayer) flvPlayer.pause();
+		});
+
+		document.getElementById('destroy').addEventListener('click', function(){
+			console.log('NOW DESTROY');
+			if(flvPlayer) {
+				flvPlayer.pause();
+				flvPlayer.unload();
+				flvPlayer.detachMediaElement();
+				flvPlayer.destroy();
+				flvPlayer = null;
+			}
+
+			document.getElementById('rebuild').classList.remove("hide");
+		});
+
+		document.getElementById('rebuild').addEventListener('click', function(){
+			console.log('NOW REBUILD');
+			if(!flvPlayer) {
+				var videoElement = document.getElementById('videoElement');
+				flvPlayer = flvjs.createPlayer({
+					type: 'flv',
+					url: 'http://192.168.0.132:8000/live/SSBU.flv'
+				});
+				flvPlayer.attachMediaElement(videoElement);
+				flvPlayer.load();
+			}
+
+			document.getElementById('rebuild').classList.add("hide");
+		});
+
+
+
+
+
+
+
+
