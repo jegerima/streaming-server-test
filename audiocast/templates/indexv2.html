@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AudioCast V2</title>
+</head>
+<body>
+    <button id='play'>Play</button>
+    <button id='stop'>Stop</button>
+
+    <audio id="player">
+        <source id='audiosrc' src="{{ url_for('newaudio', second=1) }}" type="audio/x-wav;codec=pcm">
+        Your browser does not support the audio element.
+    </audio>
+    <h2 id='title'>No info</h2>
+    <br>
+    <br>
+    <button id='generate'>Generate</button>
+    <p id='pgen'></p>
+    <script>
+        audiosrc = document.getElementById('audiosrc');
+        player = document.getElementById('player');
+        play = document.getElementById('play');
+        stop = document.getElementById('stop');
+        title = document.getElementById('title');
+
+        generate = document.getElementById('generate');
+        pgen = document.getElementById('pgen');
+
+        player.onplay = function(e){
+            //console.log('playing')
+        }
+
+        play.addEventListener('click', function(event){
+            fetch('getCurrentTime').then(res => res.json()).then(data => {
+                //console.log(data);
+                //let secs = data.secs;
+                audiosrc.src = '/newaudio/' + (data.secs + data.offset);
+                title.innerHTML = data.song;
+                player.load();
+                player.play();
+            })
+        });
+
+        stop.addEventListener('click', function(event){
+            player.pause();
+        })
+
+        generate.addEventListener('click', function(event){
+            fetch('generate').then(res => res.json()).then(data => {
+                //console.log(data);
+                //let secs = data.secs;
+                pgen.innerHTML = data.message + '. '+data.date;
+            })
+        });
+
+
+    </script>
+</body>
+</html>
